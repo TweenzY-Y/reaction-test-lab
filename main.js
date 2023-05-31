@@ -40,9 +40,10 @@ function handleWindowResize(){
 
 
 // TEST
-testBoxElement.addEventListener('click', playTest);
+testBoxElement.addEventListener('mousedown', playTest);
 
 function playTest(){
+    reactionTime = Date.now() - start;
     const testState = document.querySelector('.test-box').classList[1];
     switch (testState) {
         case 'waiting':

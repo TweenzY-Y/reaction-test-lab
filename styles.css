@@ -5,7 +5,7 @@
     --TEXT-COLOR: #FAF8FF;
     --MAIN-COLOR: #8685F0;
     --SECOND-PURPLE: #5C598A;
-    --GREEN: #D3FBD8;
+    --GREEN: #91ffa0;
     --DARK: #222137;
 }
 
@@ -155,7 +155,7 @@ ul.active {
 }
 
 .test-box.waiting {
-    background: #8D4B5D;
+    background: #a83554;
 }
 
 .test-box.ready {
