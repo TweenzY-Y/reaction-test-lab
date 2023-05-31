@@ -84,7 +84,6 @@ function createNewTest(){
     changeSecondClass(testBoxElement,'ready');
     testBoxElement.innerHTML = '<h2>Now!</h2>'; }, randNum);
 }
-
 function changeSecondClass(element,className){
     const elementClasses = element.getAttribute('class');
     const classesArray = elementClasses.split(' ');
