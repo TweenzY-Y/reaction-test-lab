@@ -5,8 +5,8 @@ const bodyElement = document.querySelector('body');
 const navButtonsElement = document.querySelectorAll('a');
 const testBoxElement = document.querySelector('.test-box');
 
-const min = 1000;
-const max = 4000;
+const min = 2000;
+const max = 5000;
 let triesCounter = 0;
 let userScores = [];
 let start;
