@@ -203,6 +203,7 @@ tr {
     border: none;
     border-collapse: separate;
     border-spacing: 0px;
+    padding: 15px;
 }
 
 th {
