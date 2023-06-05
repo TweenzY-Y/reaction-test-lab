@@ -1,72 +1,116 @@
-const hamburgerMenuButton = document.querySelector('.hamburger-menu');
+const hamburgerMenuElement = document.querySelector('.hamburger-menu');
 const navElement = document.querySelector('ul');
 const mainElement = document.querySelector('main');
 const bodyElement = document.querySelector('body');
-const navButtonsElement = document.querySelectorAll('a');
+const navLinkElements = document.querySelectorAll('a');
 const testBoxElement = document.querySelector('.test-box');
+const tableElement = document.querySelector('tbody');
+const collectionOfToggleElements = [hamburgerMenuElement,navElement,mainElement,bodyElement];
+const currentDate = getCurrentDate();
 
-const min = 2000;
-const max = 5000;
-let triesCounter = 0;
-let userScores = [];
-let start;
+// SETTINGS
 
-// HAMBURGER MENU
-hamburgerMenuButton.addEventListener('click', changeNavBarState);
+const minWaitingTime = 2000;
+const maxWaitingTime = 4000;
 
-for(element of navButtonsElement)
+// TEMP VARIABLES
+
+let attemptCounter = 0;
+let userAttemptData = [];
+let startTime;
+
+// FETCHING USER SCORES FROM LOCALSTORAGE
+let fetchedUserScores = JSON.parse(localStorage.getItem('user-reactiontime-highscores'));
+
+if (fetchedUserScores)
 {
-    element.addEventListener('click',changeNavBarState);
+    displayUserScores();
 }
+else
+{
+    fetchedUserScores = [];
+}
+
+function displayUserScores()
+{
+    tableElement.innerHTML = '';
+    let position = 1;
+    fetchedUserScores.forEach(score => {
+        const tableHTML = `<td>${position}</td><td>${score.time+'ms'}</td><td>${score.date}</td>`;
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = tableHTML;
+        tableElement.appendChild(newRow);
+        position++;
+    });
+}
+// HAMBURGER MENU AND MOBILE VIEW
+
+hamburgerMenuElement.addEventListener('click',changeNavbarState);
+
+navLinkElements.forEach(element => {
+    element.addEventListener('click',changeNavbarState);
+});
 
 window.onresize = handleWindowResize;
 
-function changeNavBarState(){
-    if(window.innerWidth <= 768)
-    {
-        hamburgerMenuButton.classList.toggle('active');
-        navElement.classList.toggle('active');
-        mainElement.classList.toggle('active');
-        bodyElement.classList.toggle('active');
-    }
+function changeNavbarState(){
+        collectionOfToggleElements.forEach(element => {
+            element.classList.toggle('active');
 }
+)}
 
 function handleWindowResize(){
-    if (window.innerWidth >= 768 && hamburgerMenuButton.classList.contains('active'))
+    if (window.innerWidth > 768 && hamburgerMenuElement.classList.contains('active'))
     {
-        changeNavBarState();
+        changeNavbarState();
     }
 }
 
-
 // TEST
+
 testBoxElement.addEventListener('mousedown', playTest);
 
 function playTest(){
-    reactionTime = Date.now() - start;
     const testState = document.querySelector('.test-box').classList[1];
-    switch (testState) {
+    switch (testState){
         case 'waiting':
-            changeSecondClass(testBoxElement,'failed');
+            changeTestState(testBoxElement,'failed');
             testBoxElement.innerHTML = '<h2>Too soon</h2><p>Try again</p>';
-            clearTimeout(callTest);
+            clearTimeout(callAttempt);
             break;
         case 'ready':
-            reactionTime = Date.now() - start;
-            userScores.push(reactionTime);
-            triesCounter++;
-            if (triesCounter === 5)
+            userAttemptResult = Date.now() - startTime;
+            userAttemptData.push(userAttemptResult);
+            attemptCounter++;
+            if (attemptCounter === 5)
             {
-                changeSecondClass(testBoxElement,'finished');
-                const userAverage = userScores.reduce((a, b) => a + b, 0) / 5;
-                testBoxElement.innerHTML = `<h2>${reactionTime}ms</h2><p>${triesCounter} of 5</p><p>You average was: <span class="average-score">${userAverage}ms</span></p>`;
-                triesCounter = 0;
-                userScores = [];
+                changeTestState(testBoxElement,'finished');
+                const userAverageScore = userAttemptData.reduce((a, b) => a + b, 0) / 5;
+                testBoxElement.innerHTML = `<h2>${userAttemptResult}ms</h2><p>${attemptCounter} of 5</p><p>You average was: <span class="average-score">${userAverageScore}ms</span></p>`;
+                attemptCounter = 0;
+                userAttemptData = [];
+
+                fetchedUserScores.push({time:`${userAverageScore}`,date:`${currentDate}`});
+                fetchedUserScores.sort((a, b) => {
+
+                if (a.time < b.time) {
+                    return -1;
+                } else if (a.time > b.time) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+                });
+
+                fetchedUserScores = fetchedUserScores.slice(0,10);
+                localStorage.setItem('user-reactiontime-highscores',JSON.stringify(fetchedUserScores));
+
+                displayUserScores();
                 break;
             }
             else{
-                changeSecondClass(testBoxElement,'succeeded');
-                testBoxElement.innerHTML =  testBoxElement.innerHTML = `<h2>${reactionTime}ms</h2><p>${triesCounter} of 5</p><p>Click for next try</p>`;
+                changeTestState(testBoxElement,'succeeded');
+                testBoxElement.innerHTML = `<h2>${userAttemptResult}ms</h2><p>${attemptCounter} of 5</p><p>Click for next try</p>`;
                 break;
             }
         default:
@@ -76,18 +120,33 @@ function playTest(){
 }
 
 function createNewTest(){
-    changeSecondClass(testBoxElement,'waiting');
+    changeTestState(testBoxElement,'waiting');
     testBoxElement.innerHTML = '<h2>Wait...</h2>';
-    randNum =  Math.floor(Math.random() * (max - min + 1)) + min;
-    callTest = setTimeout(function(){
-    start = Date.now();
-    changeSecondClass(testBoxElement,'ready');
-    testBoxElement.innerHTML = '<h2>Now!</h2>'; }, randNum);
+    randomWaitingTime = Math.floor(Math.random() * (maxWaitingTime - minWaitingTime + 1)) + minWaitingTime;
+    callAttempt = setTimeout(function()
+    {
+        startTime = Date.now();
+        changeTestState(testBoxElement,'ready');
+        testBoxElement.innerHTML = '<h2>Now!</h2>'; 
+    },randomWaitingTime);
 }
-function changeSecondClass(element,className){
+
+function changeTestState(element,className){
     const elementClasses = element.getAttribute('class');
     const classesArray = elementClasses.split(' ');
     classesArray[1] = className;
     const updatedElementClasses = classesArray.join(' ');
     element.setAttribute('class', updatedElementClasses); 
+}
+
+
+// DATE
+
+function getCurrentDate() {
+  const date = new Date();
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = String(date.getFullYear());
+
+  return `${day}.${month}.${year}`;
 }
