@@ -32,6 +32,7 @@ This website was made by using:
 - [x] Basic version of website with working reaction time measurement
 - [ ] User highscores (localStorage)
 - [ ] Sound-based tests
+- [ ] 1v1 mode (Backend)
 
 > GitHub [@TweenzY-Y](https://github.com/TweenzY-Y) &nbsp;&middot;&nbsp;
 > Instagram [@tweenzy-dev](https://www.instagram.com/tweenzy_dev/)
