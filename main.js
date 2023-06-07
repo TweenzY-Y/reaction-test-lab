@@ -22,7 +22,7 @@ let startTime;
 // FETCHING USER SCORES FROM LOCALSTORAGE
 let fetchedUserScores = JSON.parse(localStorage.getItem('user-reactiontime-highscores'));
 
-if (fetchedUserScores)
+if (fetchedUserScores && fetchedUserScores.length > 0)
 {
     displayUserScores();
 }
@@ -36,12 +36,19 @@ function displayUserScores()
     tableElement.innerHTML = '';
     let position = 1;
     fetchedUserScores.forEach(score => {
-        const tableHTML = `<td>${position}</td><td>${score.time+'ms'}</td><td>${score.date}</td>`;
+        const tableHTML = `<td>${position}</td><td>${score.time+'ms'}</td><td>${score.date}</td>
+        <div class="overlay"><img src="resources/trashbin_icon.png" height="24" width="24" alt="trash bin icon"></div>`;
         const newRow = document.createElement("tr");
         newRow.innerHTML = tableHTML;
         tableElement.appendChild(newRow);
         position++;
     });
+
+    const tableRowOverlay = document.querySelectorAll('.overlay');
+    tableRowOverlay.forEach(overlay => {
+    overlay.addEventListener('click',removeRow);
+    
+});
 }
 // HAMBURGER MENU AND MOBILE VIEW
 
@@ -152,4 +159,19 @@ function getCurrentDate() {
     const year = String(date.getFullYear());
 
     return `${day}.${month}.${year}`;
+}
+
+// SCORE REMOVING
+
+function removeRow(event){
+    const index = event.target.closest('tr').firstChild.innerHTML-1;
+    const row = event.target.closest('tr');
+    row.parentNode.removeChild(row);
+    fetchedUserScores.splice(index,1);
+    localStorage.setItem('user-reactiontime-highscores',JSON.stringify(fetchedUserScores));
+    displayUserScores();
+    if (fetchedUserScores.length === 0)
+    {
+        tableElement.innerHTML = `<td colspan="3">You don't have any score</td>`;
+    }
 }
