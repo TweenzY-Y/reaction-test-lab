@@ -216,6 +216,10 @@ tr:hover .overlay {
     opacity: 1;
 }
 
+tr:hover {
+    background-color: rgba(50, 48, 88, 0.54)
+}
+
 tr {
     position: relative;
 }
