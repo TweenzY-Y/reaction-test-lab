@@ -30,7 +30,7 @@ This website was made by using:
 ## Roadmap
 
 - [x] Basic version of website with working reaction time measurement
-- [ ] User highscores (localStorage)
+- [x] User highscores (localStorage)
 - [ ] Sound-based tests
 - [ ] 1v1 mode (Backend)
 
