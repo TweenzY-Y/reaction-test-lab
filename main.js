@@ -6,6 +6,12 @@ const navLinkElements = document.querySelectorAll('a');
 const testBoxElement = document.querySelector('.test-box');
 const tableElement = document.querySelector('tbody');
 const collectionOfToggleElements = [hamburgerMenuElement,navElement,mainElement,bodyElement];
+const settingsButtonElement = document.querySelector('#settings-btn');
+const settingsPopupBackgroundElement = document.querySelector('.settings-popup-background');
+const settingsPopupMainElement = document.querySelector('.settings-popup');
+const saveSettingsButtonElement = document.querySelector('#save-settings-btn');
+const resetSettingsButtonElement = document.querySelector('#reset-settings-btn');
+const defaultColorSettings = {main:'#8685F0',waiting:'#a83554',ready:'#91ffa0'};
 const currentDate = getCurrentDate();
 
 // SETTINGS
@@ -174,4 +180,77 @@ function removeRow(event){
     {
         tableElement.innerHTML = `<td colspan="3">You don't have any score</td>`;
     }
+}
+
+// COLOR SETTINGS
+
+settingsButtonElement.addEventListener('click', changeSettingsPopupState);
+settingsPopupBackgroundElement.addEventListener('click',()=>{
+    changeSettingsPopupState();
+    setColorPickerColors();
+});
+
+function changeSettingsPopupState(){
+    settingsPopupBackgroundElement.classList.toggle('active');
+    settingsPopupMainElement.classList.toggle('active');
+    collectionOfToggleElements[3].classList.toggle('active');
+}
+
+let userColorSettings = JSON.parse(localStorage.getItem('user-settings'));
+if (userColorSettings)
+{
+    setColorSettings();
+    setColorPickerColors();
+}
+
+function setColorSettings(){
+    const rootElement = document.querySelector(':root');
+    for (const[state,color] of Object.entries(userColorSettings)){
+        switch (state) {
+        case 'main':
+            rootElement.style.setProperty('--MAIN-COLOR',color);
+            break;
+        case 'waiting':
+            rootElement.style.setProperty('--WAITING-COLOR',color);
+            break;
+        case 'ready':
+            rootElement.style.setProperty('--READY-COLOR',color);
+            break;
+        default:
+            break;
+    }
+    }
+}
+
+function setColorPickerColors()
+{
+    const rootElement = document.querySelector(':root');
+    const colors = getComputedStyle(rootElement);
+    document.querySelector('#main-color').value = colors.getPropertyValue('--MAIN-COLOR');
+    document.querySelector('#waiting-color').value = colors.getPropertyValue('--WAITING-COLOR');
+    document.querySelector('#ready-color').value = colors.getPropertyValue('--READY-COLOR');
+}
+
+saveSettingsButtonElement.addEventListener('click',() => {
+    saveColorSettings();
+    setColorSettings();
+});
+resetSettingsButtonElement.addEventListener('click',() =>{
+    resetColorSettings();
+    setColorSettings();
+    setColorPickerColors();
+});
+
+function saveColorSettings(){
+    userColorSettings= {
+        main:`${document.querySelector('#main-color').value}`,
+        waiting:`${document.querySelector('#waiting-color').value}`,
+        ready:`${document.querySelector('#ready-color').value}`
+    };
+    localStorage.setItem('user-settings',JSON.stringify(userColorSettings));
+}
+
+function resetColorSettings(){
+    userColorSettings = defaultColorSettings;
+    localStorage.setItem('user-settings',JSON.stringify(userColorSettings));
 }

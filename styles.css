@@ -5,7 +5,8 @@
     --TEXT-COLOR: #FAF8FF;
     --MAIN-COLOR: #8685F0;
     --SECOND-PURPLE: #5C598A;
-    --GREEN: #91ffa0;
+    --READY-COLOR: #91ffa0;
+    --WAITING-COLOR: #a83554;
     --DARK: #222137;
 }
 
@@ -15,10 +16,6 @@
     font-family: 'Bahnschrift', sans-serif;
     margin: 0;
     padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
 }
 
 body {
@@ -62,8 +59,10 @@ ul {
 ul li {
     animation: slideIn .5s;
     background: rgba(0, 0, 0, 0.75);
-    font-size: 30px;
+    font-size: 25px;
     height: 75px;
+    white-space: nowrap;
+    ;
 }
 
 ul li a {
@@ -155,16 +154,16 @@ ul.active {
 }
 
 .test-box.waiting {
-    background: #a83554;
+    background: var(--WAITING-COLOR);
 }
 
 .test-box.ready {
-    background: var(--GREEN);
+    background: var(--READY-COLOR);
     color: var(--DARK);
 }
 
-.green {
-    color: var(--GREEN);
+.ready-box-color {
+    color: var(--READY-COLOR);
 }
 
 .average-score {
@@ -241,6 +240,83 @@ tr {
 
 .overlay:hover {
     cursor: pointer;
+}
+
+/* SETTINGS POPUP */
+
+.settings-popup-background {
+    width: 100%;
+    height: 100%;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.75);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    z-index: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.settings-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--SECOND-PURPLE);
+    border-radius: 20px;
+    height: 70%;
+    width: 80%;
+    z-index: 2;
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    display: none;
+}
+
+.settings-popup .settings {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.settings-popup button {
+    border: 0;
+    width: 50%;
+    height: 50px;
+    font-size: 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 30px;
+}
+
+#reset-settings-btn {
+    background: rgb(0, 0, 0);
+    color: white;
+}
+
+.settings-popup button:hover {
+    cursor: pointer;
+}
+
+input[type="color"] {
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    background: none;
+    border: 0;
+    height: 50px;
+    width: 50px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.settings-popup-background.active,
+.settings-popup.active {
+    display: flex;
 }
 
 /* ANIMATIONS */
@@ -334,6 +410,11 @@ tr {
         height: max(200px, calc(100vh - 295px));
         margin: 100px 0;
         width: 100%;
+    }
+
+    /* SETTINGS POPUP */
+    .settings-popup button {
+        width: 350px;
     }
 
 }

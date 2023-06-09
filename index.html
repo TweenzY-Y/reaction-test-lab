@@ -30,14 +30,36 @@
                         <img src="resources/3388492-200.png" width="42" height="42" alt="highscore icon"
                             loading="lazy">Highscores</a>
                 </li>
+                <li id="settings-btn">
+                    <a href="#">
+                        <img src="resources//color_settings_icon.png" width="42" height="42" alt="settings icon" loading="lazy">
+                        Settings
+                    </a>
+                </li>
                 </a>
             </ul>
         </nav>
     </header>
     <hr>
     <main>
+        <section class="settings-popup">
+            <h2>Color settings</h2>
+            <section class="settings">
+                <label for="main-color">Main color</label>
+                <input type="color" name="main-color" id="main-color" value="#8685F0">
+                <label for="waiting-color">Waiting color</label>
+                <input type="color" name="waiting-color" id="waiting-color" value="#a83554">
+                <label for="ready-color">Ready color</label>
+                <input type="color" name="ready-color" id="ready-color" value="#91ffa0">
+            </section>
+            <button id="save-settings-btn">Save</button>
+            <button id="reset-settings-btn">Reset</button>
+        </section>
+        <section class="settings-popup-background">
+
+        </section>
         <section class="test-box">
-            <h2>Your goal is to click <span class="green">green box</span> as fast as you can</h2>
+            <h2>Your goal is to click <span class="ready-box-color">this color</span> as fast as you can</h2>
             <p>Click anywhere to start</p>
         </section>
         <h2 id="highscore">Your Highscores</h2>
