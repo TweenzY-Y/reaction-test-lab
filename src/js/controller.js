@@ -1,0 +1,208 @@
+// IMPORTS
+import * as Settings from "./config.js";
+import * as model from "./model.js";
+import colorSettingsView from "./views/colorSettingsView.js";
+import tableView from "./views/tableView.js";
+
+const hamburgerMenuElement = document.querySelector(".hamburger-menu");
+const navElement = document.querySelector("ul");
+const mainElement = document.querySelector("main");
+const bodyElement = document.querySelector("body");
+const navLinkElements = document.querySelectorAll("a");
+const testBoxElement = document.querySelector(".test-box");
+const collectionOfToggleElements = [
+  hamburgerMenuElement,
+  navElement,
+  mainElement,
+  bodyElement,
+];
+const settingsButtonElement = document.querySelector("#settings-btn");
+const settingsPopupBackgroundElement = document.querySelector(
+  ".settings-popup-background"
+);
+const settingsPopupMainElement = document.querySelector(".settings-popup");
+const currentDate = getCurrentDate();
+// TEMP VARIABLES
+
+let attemptCounter = 0;
+let userAttemptData = [];
+let startTime;
+let callAttempt;
+// FETCHING USER SCORES FROM LOCALSTORAGE
+model.getUserHighscores(); // MVC
+tableView.displayUserScores(model.state.highscores); // MVC
+// HAMBURGER MENU AND MOBILE VIEW
+const controlUpdateHighscore = function (score) {
+  model.addScore(score, currentDate); // MVC
+  model.sortHighscores(); // MVC
+  model.removeRedundantScores(); // MVC
+  model.saveUserHighscores(); // MVC
+  tableView.displayUserScores(model.state.highscores); // MVC
+};
+hamburgerMenuElement.addEventListener("click", changeNavbarState);
+
+navLinkElements.forEach((element) => {
+  element.addEventListener("click", changeNavbarState);
+});
+
+window.onresize = handleWindowResize;
+
+function changeNavbarState() {
+  if (window.innerWidth < 768) {
+    collectionOfToggleElements.forEach((element) => {
+      element.classList.toggle("active");
+    });
+  }
+}
+
+function handleWindowResize() {
+  if (
+    window.innerWidth >= 768 &&
+    hamburgerMenuElement.classList.contains("active")
+  ) {
+    collectionOfToggleElements.forEach((element) => {
+      element.classList.remove("active");
+    });
+  }
+}
+
+// TEST
+
+testBoxElement.addEventListener("mousedown", playTest);
+
+function playTest() {
+  const testState = document.querySelector(".test-box").classList[1];
+  switch (testState) {
+    case "waiting":
+      changeTestState(testBoxElement, "failed");
+      testBoxElement.innerHTML = "<h2>Too soon</h2><p>Try again</p>";
+      clearTimeout(callAttempt);
+      break;
+    case "ready":
+      const userAttemptResult = Date.now() - startTime;
+      userAttemptData.push(userAttemptResult);
+      attemptCounter++;
+      if (attemptCounter === 5) {
+        changeTestState(testBoxElement, "finished");
+        const userAverageScore = userAttemptData.reduce((a, b) => a + b, 0) / 5;
+        testBoxElement.innerHTML = `<h2>${userAttemptResult}ms</h2><p>${attemptCounter} of 5</p><p>You average was: <span class="average-score">${userAverageScore}ms</span></p>`;
+        attemptCounter = 0;
+        userAttemptData = [];
+
+        controlUpdateHighscore(userAverageScore);
+        break;
+      } else {
+        changeTestState(testBoxElement, "succeeded");
+        testBoxElement.innerHTML = `<h2>${userAttemptResult}ms</h2><p>${attemptCounter} of 5</p><p>Click for next try</p>`;
+        break;
+      }
+    default:
+      createNewTest();
+      break;
+  }
+}
+
+function createNewTest() {
+  changeTestState(testBoxElement, "waiting");
+  testBoxElement.innerHTML = "<h2>Wait...</h2>";
+  const randomWaitingTime =
+    Math.floor(
+      Math.random() *
+        (Settings.MAX_WAITING_TIME - Settings.MIN_WAITING_TIME + 1)
+    ) + Settings.MIN_WAITING_TIME;
+  callAttempt = setTimeout(function () {
+    startTime = Date.now();
+    changeTestState(testBoxElement, "ready");
+    testBoxElement.innerHTML = "<h2>Now!</h2>";
+  }, randomWaitingTime);
+}
+
+function changeTestState(element, className) {
+  const elementClasses = element.getAttribute("class");
+  const classesArray = elementClasses.split(" ");
+  classesArray[1] = className;
+  const updatedElementClasses = classesArray.join(" ");
+  element.setAttribute("class", updatedElementClasses);
+}
+
+// DATE
+
+function getCurrentDate() {
+  const date = new Date();
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = String(date.getFullYear());
+
+  return `${day}.${month}.${year}`;
+}
+// COLOR SETTINGS
+
+settingsButtonElement.addEventListener("click", changeSettingsPopupState);
+settingsPopupBackgroundElement.addEventListener("click", () => {
+  changeSettingsPopupState();
+  setColorPickerColors();
+});
+
+function changeSettingsPopupState() {
+  settingsPopupBackgroundElement.classList.toggle("active");
+  settingsPopupMainElement.classList.toggle("active");
+  collectionOfToggleElements[3].classList.toggle("active");
+}
+
+let userColorSettings = JSON.parse(localStorage.getItem("user-settings"));
+if (userColorSettings) {
+  setColorSettings();
+  setColorPickerColors();
+}
+
+function setColorSettings() {
+  const rootElement = document.querySelector(":root");
+  for (const [state, color] of Object.entries(userColorSettings)) {
+    switch (state) {
+      case "main":
+        rootElement.style.setProperty("--MAIN-COLOR", color);
+        break;
+      case "waiting":
+        rootElement.style.setProperty("--WAITING-COLOR", color);
+        break;
+      case "ready":
+        rootElement.style.setProperty("--READY-COLOR", color);
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+function setColorPickerColors() {
+  const rootElement = document.querySelector(":root");
+  const colors = getComputedStyle(rootElement);
+  document.querySelector("#main-color").value =
+    colors.getPropertyValue("--MAIN-COLOR");
+  document.querySelector("#waiting-color").value =
+    colors.getPropertyValue("--WAITING-COLOR");
+  document.querySelector("#ready-color").value =
+    colors.getPropertyValue("--READY-COLOR");
+}
+
+const controlScoreRemove = function (index) {
+  model.removeScore(index);
+  model.saveUserHighscores();
+  tableView.displayUserScores(model.state.highscores);
+}; // MVC
+
+tableView.addRemovingScoreHandler(controlScoreRemove); // MVC
+model.getUserColorSettings();
+
+const controlResetColorSettings = function () {
+  model.state.colors = Settings.DEFAULT_COLORS;
+  model.saveUserColorSettings();
+};
+
+const controlSaveColorSettings = function (colorSettings) {
+  model.setUserColorSettings(colorSettings);
+  model.saveUserColorSettings();
+};
+
+colorSettingsView.addResetButtonHandle(controlResetColorSettings);
+colorSettingsView.addSaveButtonHandle(controlSaveColorSettings);
