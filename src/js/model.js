@@ -6,6 +6,12 @@ const state = {
     waiting: DEFAULT_COLORS.waiting,
     ready: DEFAULT_COLORS.ready,
   },
+  test: {
+    attempt: 0,
+    scores: [],
+    averageScore: undefined,
+    state: `waiting`,
+  },
 };
 
 // SCORES

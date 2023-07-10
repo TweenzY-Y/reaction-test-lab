@@ -6,5 +6,18 @@ const DEFAULT_COLORS = {
   waiting: "#a83554",
   ready: "#91ffa0",
 };
-
-export { MIN_WAITING_TIME, MAX_WAITING_TIME, MAX_USER_SCORES, DEFAULT_COLORS };
+const TEST_STATES = {
+  undefined: "waiting",
+  waiting: "failed",
+  failed: "waiting",
+  ready: "succeeded",
+  succeeded: "waiting",
+  finished: "waiting",
+};
+export {
+  MIN_WAITING_TIME,
+  MAX_WAITING_TIME,
+  MAX_USER_SCORES,
+  DEFAULT_COLORS,
+  TEST_STATES,
+};

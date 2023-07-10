@@ -3,6 +3,7 @@ import * as Settings from "./config.js";
 import * as model from "./model.js";
 import colorSettingsView from "./views/colorSettingsView.js";
 import tableView from "./views/tableView.js";
+import reactionTestView from "./views/reactionTestView.js";
 
 const hamburgerMenuElement = document.querySelector(".hamburger-menu");
 const navElement = document.querySelector("ul");
@@ -159,3 +160,5 @@ const controlSaveColorSettings = function (colorSettings) {
 colorSettingsView.addResetButtonHandle(controlResetColorSettings);
 colorSettingsView.addSaveButtonHandle(controlSaveColorSettings);
 colorSettingsView.addSettingsHandler();
+reactionTestView.changeStyle(model.state.test.state);
+reactionTestView.changeContent(model.state.test);
