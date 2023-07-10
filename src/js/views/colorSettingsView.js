@@ -1,8 +1,15 @@
+// SETTINGS POPUP ELEMENTS
+const settingsButtonElement = document.querySelector("#settings-btn");
+const settingsPopupBackgroundElement = document.querySelector(
+  ".settings-popup-background"
+);
+const settingsPopupMainElement = document.querySelector(".settings-popup");
+// BUTTONS
 const resetSettingsButtonElement = document.querySelector(
   "#reset-settings-btn"
 );
 const saveSettingsButtonElement = document.querySelector("#save-settings-btn");
-
+// COLOR PICKERS
 const mainColorPicker = document.querySelector("#main-color");
 const waitingColorPicker = document.querySelector("#waiting-color");
 const readyColorPicker = document.querySelector("#ready-color");
@@ -21,6 +28,23 @@ class ColorSettingsView {
       };
       handler(userColors);
     });
+  }
+
+  setPickersColor(colors) {
+    Object.entries(colors).forEach((setting) => {
+      const [state, color] = setting;
+      eval(`${state.concat("ColorPicker")}`).value = color;
+    });
+  }
+
+  changeState() {
+    settingsPopupBackgroundElement.classList.toggle("active");
+    settingsPopupMainElement.classList.toggle("active");
+  }
+
+  addSettingsHandler() {
+    settingsButtonElement.addEventListener("click", this.changeState);
+    settingsPopupBackgroundElement.addEventListener("click", this.changeState);
   }
 }
 

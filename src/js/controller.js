@@ -16,11 +16,6 @@ const collectionOfToggleElements = [
   mainElement,
   bodyElement,
 ];
-const settingsButtonElement = document.querySelector("#settings-btn");
-const settingsPopupBackgroundElement = document.querySelector(
-  ".settings-popup-background"
-);
-const settingsPopupMainElement = document.querySelector(".settings-popup");
 const currentDate = getCurrentDate();
 // TEMP VARIABLES
 
@@ -39,6 +34,7 @@ const controlUpdateHighscore = function (score) {
   model.saveUserHighscores(); // MVC
   tableView.displayUserScores(model.state.highscores); // MVC
 };
+
 hamburgerMenuElement.addEventListener("click", changeNavbarState);
 
 navLinkElements.forEach((element) => {
@@ -136,55 +132,6 @@ function getCurrentDate() {
   return `${day}.${month}.${year}`;
 }
 // COLOR SETTINGS
-
-settingsButtonElement.addEventListener("click", changeSettingsPopupState);
-settingsPopupBackgroundElement.addEventListener("click", () => {
-  changeSettingsPopupState();
-  setColorPickerColors();
-});
-
-function changeSettingsPopupState() {
-  settingsPopupBackgroundElement.classList.toggle("active");
-  settingsPopupMainElement.classList.toggle("active");
-  collectionOfToggleElements[3].classList.toggle("active");
-}
-
-let userColorSettings = JSON.parse(localStorage.getItem("user-settings"));
-if (userColorSettings) {
-  setColorSettings();
-  setColorPickerColors();
-}
-
-function setColorSettings() {
-  const rootElement = document.querySelector(":root");
-  for (const [state, color] of Object.entries(userColorSettings)) {
-    switch (state) {
-      case "main":
-        rootElement.style.setProperty("--MAIN-COLOR", color);
-        break;
-      case "waiting":
-        rootElement.style.setProperty("--WAITING-COLOR", color);
-        break;
-      case "ready":
-        rootElement.style.setProperty("--READY-COLOR", color);
-        break;
-      default:
-        break;
-    }
-  }
-}
-
-function setColorPickerColors() {
-  const rootElement = document.querySelector(":root");
-  const colors = getComputedStyle(rootElement);
-  document.querySelector("#main-color").value =
-    colors.getPropertyValue("--MAIN-COLOR");
-  document.querySelector("#waiting-color").value =
-    colors.getPropertyValue("--WAITING-COLOR");
-  document.querySelector("#ready-color").value =
-    colors.getPropertyValue("--READY-COLOR");
-}
-
 const controlScoreRemove = function (index) {
   model.removeScore(index);
   model.saveUserHighscores();
@@ -193,16 +140,22 @@ const controlScoreRemove = function (index) {
 
 tableView.addRemovingScoreHandler(controlScoreRemove); // MVC
 model.getUserColorSettings();
+model.applyUserColorSettings();
+colorSettingsView.setPickersColor(model.state.colors);
 
 const controlResetColorSettings = function () {
-  model.state.colors = Settings.DEFAULT_COLORS;
+  model.setUserColorSettings(Settings.DEFAULT_COLORS);
+  model.applyUserColorSettings();
   model.saveUserColorSettings();
+  colorSettingsView.setPickersColor(model.state.colors);
 };
 
 const controlSaveColorSettings = function (colorSettings) {
   model.setUserColorSettings(colorSettings);
+  model.applyUserColorSettings();
   model.saveUserColorSettings();
 };
 
 colorSettingsView.addResetButtonHandle(controlResetColorSettings);
 colorSettingsView.addSaveButtonHandle(controlSaveColorSettings);
+colorSettingsView.addSettingsHandler();

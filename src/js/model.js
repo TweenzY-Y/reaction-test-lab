@@ -59,6 +59,16 @@ const setUserColorSettings = function (colorSettings) {
     console.log(state.colors);
   }
 };
+
+const applyUserColorSettings = function () {
+  Object.entries(state.colors).forEach((setting) => {
+    const [state, color] = setting;
+    document.documentElement.style.setProperty(
+      `--${state.toUpperCase()}-COLOR`,
+      color
+    );
+  });
+};
 export {
   state,
   getUserHighscores,
@@ -70,4 +80,5 @@ export {
   getUserColorSettings,
   saveUserColorSettings,
   setUserColorSettings,
+  applyUserColorSettings,
 };
