@@ -1,4 +1,4 @@
-import { DEFAULT_COLORS, MAX_USER_SCORES } from "./config.js";
+import { DEFAULT_COLORS, MAX_USER_SCORES, TEST_STATES } from "./config.js";
 const state = {
   highscores: [],
   colors: {
@@ -10,7 +10,7 @@ const state = {
     attempt: 0,
     scores: [],
     averageScore: undefined,
-    state: `waiting`,
+    state: undefined,
   },
 };
 
@@ -75,6 +75,13 @@ const applyUserColorSettings = function () {
     );
   });
 };
+
+// TEST
+
+const changeState = function () {
+  state.test.state = TEST_STATES[`${state.test.state}`];
+  console.log(state.test.state);
+};
 export {
   state,
   getUserHighscores,
@@ -87,4 +94,5 @@ export {
   saveUserColorSettings,
   setUserColorSettings,
   applyUserColorSettings,
+  changeState,
 };

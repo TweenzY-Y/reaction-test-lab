@@ -14,10 +14,12 @@ const TEST_STATES = {
   succeeded: "waiting",
   finished: "waiting",
 };
+const ATTEMPTS_TO_FINISH = 5;
 export {
   MIN_WAITING_TIME,
   MAX_WAITING_TIME,
   MAX_USER_SCORES,
   DEFAULT_COLORS,
   TEST_STATES,
+  ATTEMPTS_TO_FINISH,
 };

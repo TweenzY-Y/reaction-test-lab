@@ -65,8 +65,6 @@ function handleWindowResize() {
 
 // TEST
 
-testBoxElement.addEventListener("mousedown", playTest);
-
 function playTest() {
   const testState = document.querySelector(".test-box").classList[1];
   switch (testState) {
@@ -114,14 +112,6 @@ function createNewTest() {
   }, randomWaitingTime);
 }
 
-function changeTestState(element, className) {
-  const elementClasses = element.getAttribute("class");
-  const classesArray = elementClasses.split(" ");
-  classesArray[1] = className;
-  const updatedElementClasses = classesArray.join(" ");
-  element.setAttribute("class", updatedElementClasses);
-}
-
 // DATE
 
 function getCurrentDate() {
@@ -157,8 +147,12 @@ const controlSaveColorSettings = function (colorSettings) {
   model.saveUserColorSettings();
 };
 
+const controlTestClick = function () {
+  model.changeState();
+  reactionTestView.changeStyle(model.state.test.state);
+  reactionTestView.changeContent(model.state.test);
+};
 colorSettingsView.addResetButtonHandle(controlResetColorSettings);
 colorSettingsView.addSaveButtonHandle(controlSaveColorSettings);
 colorSettingsView.addSettingsHandler();
-reactionTestView.changeStyle(model.state.test.state);
-reactionTestView.changeContent(model.state.test);
+reactionTestView.addClickHandle(controlTestClick);
