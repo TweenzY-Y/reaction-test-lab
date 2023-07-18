@@ -10,7 +10,6 @@ const navElement = document.querySelector("ul");
 const mainElement = document.querySelector("main");
 const bodyElement = document.querySelector("body");
 const navLinkElements = document.querySelectorAll("a");
-const testBoxElement = document.querySelector(".test-box");
 const collectionOfToggleElements = [
   hamburgerMenuElement,
   navElement,
@@ -20,21 +19,10 @@ const collectionOfToggleElements = [
 const currentDate = getCurrentDate();
 // TEMP VARIABLES
 
-let attemptCounter = 0;
-let userAttemptData = [];
-let startTime;
-let callAttempt;
 // FETCHING USER SCORES FROM LOCALSTORAGE
 model.getUserHighscores(); // MVC
 tableView.displayUserScores(model.state.highscores); // MVC
 // HAMBURGER MENU AND MOBILE VIEW
-const controlUpdateHighscore = function (score) {
-  model.addScore(score, currentDate); // MVC
-  model.sortHighscores(); // MVC
-  model.removeRedundantScores(); // MVC
-  model.saveUserHighscores(); // MVC
-  tableView.displayUserScores(model.state.highscores); // MVC
-};
 
 hamburgerMenuElement.addEventListener("click", changeNavbarState);
 
@@ -61,55 +49,6 @@ function handleWindowResize() {
       element.classList.remove("active");
     });
   }
-}
-
-// TEST
-
-function playTest() {
-  const testState = document.querySelector(".test-box").classList[1];
-  switch (testState) {
-    case "waiting":
-      changeTestState(testBoxElement, "failed");
-      testBoxElement.innerHTML = "<h2>Too soon</h2><p>Try again</p>";
-      clearTimeout(callAttempt);
-      break;
-    case "ready":
-      const userAttemptResult = Date.now() - startTime;
-      userAttemptData.push(userAttemptResult);
-      attemptCounter++;
-      if (attemptCounter === 5) {
-        changeTestState(testBoxElement, "finished");
-        const userAverageScore = userAttemptData.reduce((a, b) => a + b, 0) / 5;
-        testBoxElement.innerHTML = `<h2>${userAttemptResult}ms</h2><p>${attemptCounter} of 5</p><p>You average was: <span class="average-score">${userAverageScore}ms</span></p>`;
-        attemptCounter = 0;
-        userAttemptData = [];
-
-        controlUpdateHighscore(userAverageScore);
-        break;
-      } else {
-        changeTestState(testBoxElement, "succeeded");
-        testBoxElement.innerHTML = `<h2>${userAttemptResult}ms</h2><p>${attemptCounter} of 5</p><p>Click for next try</p>`;
-        break;
-      }
-    default:
-      createNewTest();
-      break;
-  }
-}
-
-function createNewTest() {
-  changeTestState(testBoxElement, "waiting");
-  testBoxElement.innerHTML = "<h2>Wait...</h2>";
-  const randomWaitingTime =
-    Math.floor(
-      Math.random() *
-        (Settings.MAX_WAITING_TIME - Settings.MIN_WAITING_TIME + 1)
-    ) + Settings.MIN_WAITING_TIME;
-  callAttempt = setTimeout(function () {
-    startTime = Date.now();
-    changeTestState(testBoxElement, "ready");
-    testBoxElement.innerHTML = "<h2>Now!</h2>";
-  }, randomWaitingTime);
 }
 
 // DATE
@@ -148,9 +87,26 @@ const controlSaveColorSettings = function (colorSettings) {
 };
 
 const controlTestClick = function () {
-  model.changeState();
+  model.playTest();
   reactionTestView.changeStyle(model.state.test.state);
   reactionTestView.changeContent(model.state.test);
+  if (model.state.test.timeoutTime) {
+    setTimeout(() => {
+      reactionTestView.changeStyle(model.state.test.state);
+      reactionTestView.changeContent(model.state.test);
+    }, model.state.test.timeoutTime);
+  }
+  if (model.state.test.averageScore) {
+    controlUpdateHighscore(model.state.test.averageScore);
+    model.state.test.averageScore = undefined;
+  }
+};
+const controlUpdateHighscore = function (score) {
+  model.addScore(score, currentDate); // MVC
+  model.sortHighscores(); // MVC
+  model.removeRedundantScores(); // MVC
+  model.saveUserHighscores(); // MVC
+  tableView.displayUserScores(model.state.highscores); // MVC
 };
 colorSettingsView.addResetButtonHandle(controlResetColorSettings);
 colorSettingsView.addSaveButtonHandle(controlSaveColorSettings);

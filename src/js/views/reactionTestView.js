@@ -19,7 +19,7 @@ class ReactionTestView {
         contentHTML = `<h2>Wait...</h2>`;
         break;
       case "ready":
-        contentHTML = `<h2>Now!</h2>"`;
+        contentHTML = `<h2>Now!</h2>`;
         break;
       case "finished":
         contentHTML = `<h2>${test.scores.at(-1)}ms</h2><p>${
