@@ -22,6 +22,7 @@ const state = {
     state: undefined,
     timeout: undefined,
   },
+  mobile_view: undefined,
 };
 
 // SCORES

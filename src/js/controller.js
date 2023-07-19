@@ -4,6 +4,7 @@ import * as model from "./model.js";
 import colorSettingsView from "./views/colorSettingsView.js";
 import tableView from "./views/tableView.js";
 import reactionTestView from "./views/reactionTestView.js";
+import hamburgerMenuView from "./views/hamburgerMenuView.js";
 
 const hamburgerMenuElement = document.querySelector(".hamburger-menu");
 const navElement = document.querySelector("ul");
@@ -18,39 +19,31 @@ const collectionOfToggleElements = [
 ];
 const currentDate = getCurrentDate();
 // TEMP VARIABLES
+const mobileView = matchMedia(`(max-width: ${Settings.MOBILE_VIEW_WIDTH})`);
+model.state.mobile_view = mobileView.matches;
 
+// listen to whenever query.matches changes
+mobileView.addEventListener("change", (event) => {
+  console.log("test");
+  model.state.mobile_view = event.matches;
+  hamburgerMenuView.toggleHamburgerMenuEffect(model.state.mobile_view);
+});
 // FETCHING USER SCORES FROM LOCALSTORAGE
 model.getUserHighscores(); // MVC
 tableView.displayUserScores(model.state.highscores); // MVC
 // HAMBURGER MENU AND MOBILE VIEW
 
-hamburgerMenuElement.addEventListener("click", changeNavbarState);
+const a = function () {
+  hamburgerMenuView.toggleHamburgerMenuEffect(model.state.mobile_view);
+};
+hamburgerMenuView.addHamburgerMenuClickHandler(a);
 
 navLinkElements.forEach((element) => {
-  element.addEventListener("click", changeNavbarState);
+  element.addEventListener(
+    "click",
+    hamburgerMenuView.toggleHamburgerMenuEffect
+  );
 });
-
-window.onresize = handleWindowResize;
-
-function changeNavbarState() {
-  if (window.innerWidth < 768) {
-    collectionOfToggleElements.forEach((element) => {
-      element.classList.toggle("active");
-    });
-  }
-}
-
-function handleWindowResize() {
-  if (
-    window.innerWidth >= 768 &&
-    hamburgerMenuElement.classList.contains("active")
-  ) {
-    collectionOfToggleElements.forEach((element) => {
-      element.classList.remove("active");
-    });
-  }
-}
-
 // DATE
 
 function getCurrentDate() {
@@ -101,6 +94,7 @@ const controlTestClick = function () {
     model.state.test.averageScore = undefined;
   }
 };
+
 const controlUpdateHighscore = function (score) {
   model.addScore(score, currentDate); // MVC
   model.sortHighscores(); // MVC

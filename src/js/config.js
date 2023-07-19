@@ -15,6 +15,7 @@ const TEST_STATES = {
   finished: "waiting",
 };
 const ATTEMPTS_TO_FINISH = 5;
+const MOBILE_VIEW_WIDTH = "768px";
 export {
   MIN_WAITING_TIME,
   MAX_WAITING_TIME,
@@ -22,4 +23,5 @@ export {
   DEFAULT_COLORS,
   TEST_STATES,
   ATTEMPTS_TO_FINISH,
+  MOBILE_VIEW_WIDTH,
 };
