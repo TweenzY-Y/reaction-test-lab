@@ -26,7 +26,7 @@ class ReactionTestView {
           test.attempt
         } of ${ATTEMPTS_TO_FINISH}</p><p>You average was: <span class="average-score">${
           test.averageScore
-        }ms</span></p>`;
+        }ms</span></p><button class='new-test-btn'>New test</button>`;
         break;
       case "succeeded":
         contentHTML = `<h2>${test.scores.at(-1)}ms</h2><p>${

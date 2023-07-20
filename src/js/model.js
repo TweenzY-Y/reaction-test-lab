@@ -128,12 +128,14 @@ const playTest = function () {
     case "finished":
       state.test.attempt = 0;
       state.test.scores = [];
-      changeState();
       makeNewAttempt();
+      changeState();
+      break;
+    case undefined:
+      makeNewAttempt();
+      changeState();
       break;
     default:
-      makeNewAttempt();
-      changeState();
       break;
   }
 };

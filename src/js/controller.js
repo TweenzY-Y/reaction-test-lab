@@ -46,10 +46,12 @@ const controlHamburgerMenuClick = function () {
 };
 
 //// Test control functions
-const controlTestClick = function () {
-  model.playTest();
-  reactionTestView.changeStyle(model.state.test.state);
-  reactionTestView.changeContent(model.state.test);
+const controlTestClick = function (e) {
+  if (model.state.test.state !== "finished" || e.target.tagName === "BUTTON") {
+    model.playTest();
+    reactionTestView.changeStyle(model.state.test.state);
+    reactionTestView.changeContent(model.state.test);
+  }
   if (model.state.test.timeoutTime) {
     setTimeout(() => {
       reactionTestView.changeStyle(model.state.test.state);
