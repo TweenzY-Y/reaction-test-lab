@@ -6,6 +6,7 @@ import {
   MAX_WAITING_TIME,
   ATTEMPTS_TO_FINISH,
 } from "./config.js";
+import getCurrentDate from "./helpers.js";
 const state = {
   highscores: [],
   colors: {
@@ -37,10 +38,10 @@ const removeScore = function (index) {
   state.highscores.splice(index, 1);
 };
 
-const addScore = function (averageScore, currentDate) {
+const addScore = function (averageScore) {
   state.highscores.push({
     time: `${averageScore}`,
-    date: `${currentDate}`,
+    date: `${getCurrentDate()}`,
   });
 };
 

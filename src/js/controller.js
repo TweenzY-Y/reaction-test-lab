@@ -6,65 +6,25 @@ import tableView from "./views/tableView.js";
 import reactionTestView from "./views/reactionTestView.js";
 import hamburgerMenuView from "./views/hamburgerMenuView.js";
 
-const hamburgerMenuElement = document.querySelector(".hamburger-menu");
-const navElement = document.querySelector("ul");
-const mainElement = document.querySelector("main");
-const bodyElement = document.querySelector("body");
-const navLinkElements = document.querySelectorAll("a");
-const collectionOfToggleElements = [
-  hamburgerMenuElement,
-  navElement,
-  mainElement,
-  bodyElement,
-];
-const currentDate = getCurrentDate();
-// TEMP VARIABLES
-const mobileView = matchMedia(`(max-width: ${Settings.MOBILE_VIEW_WIDTH})`);
-model.state.mobile_view = mobileView.matches;
+// Functions
 
-// listen to whenever query.matches changes
-mobileView.addEventListener("change", (event) => {
-  console.log("test");
-  model.state.mobile_view = event.matches;
-  hamburgerMenuView.toggleHamburgerMenuEffect(model.state.mobile_view);
-});
-// FETCHING USER SCORES FROM LOCALSTORAGE
-model.getUserHighscores(); // MVC
-tableView.displayUserScores(model.state.highscores); // MVC
-// HAMBURGER MENU AND MOBILE VIEW
+//// Score control functions
 
-const a = function () {
-  hamburgerMenuView.toggleHamburgerMenuEffect(model.state.mobile_view);
-};
-hamburgerMenuView.addHamburgerMenuClickHandler(a);
-
-navLinkElements.forEach((element) => {
-  element.addEventListener(
-    "click",
-    hamburgerMenuView.toggleHamburgerMenuEffect
-  );
-});
-// DATE
-
-function getCurrentDate() {
-  const date = new Date();
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = String(date.getFullYear());
-
-  return `${day}.${month}.${year}`;
-}
-// COLOR SETTINGS
 const controlScoreRemove = function (index) {
   model.removeScore(index);
   model.saveUserHighscores();
   tableView.displayUserScores(model.state.highscores);
-}; // MVC
+};
 
-tableView.addRemovingScoreHandler(controlScoreRemove); // MVC
-model.getUserColorSettings();
-model.applyUserColorSettings();
-colorSettingsView.setPickersColor(model.state.colors);
+const controlUpdateHighscore = function (score) {
+  model.addScore(score);
+  model.sortHighscores();
+  model.removeRedundantScores();
+  model.saveUserHighscores();
+  tableView.displayUserScores(model.state.highscores);
+};
+
+//// Color settings control functions
 
 const controlResetColorSettings = function () {
   model.setUserColorSettings(Settings.DEFAULT_COLORS);
@@ -79,6 +39,13 @@ const controlSaveColorSettings = function (colorSettings) {
   model.saveUserColorSettings();
 };
 
+//// Hamburger menu control functions
+
+const controlHamburgerMenuClick = function () {
+  hamburgerMenuView.handleHamburgerMenuClick();
+};
+
+//// Test control functions
 const controlTestClick = function () {
   model.playTest();
   reactionTestView.changeStyle(model.state.test.state);
@@ -95,14 +62,37 @@ const controlTestClick = function () {
   }
 };
 
-const controlUpdateHighscore = function (score) {
-  model.addScore(score, currentDate); // MVC
-  model.sortHighscores(); // MVC
-  model.removeRedundantScores(); // MVC
-  model.saveUserHighscores(); // MVC
-  tableView.displayUserScores(model.state.highscores); // MVC
-};
+// App logic
+
+//// Observing mobile view change
+
+const mobileView = matchMedia(`(max-width: ${Settings.MOBILE_VIEW_WIDTH})`);
+
+mobileView.addEventListener("change", () => {
+  hamburgerMenuView.removeHamburgerEffects();
+});
+
+//// Hamburger menu
+
+hamburgerMenuView.addHamburgerMenuClickHandler(controlHamburgerMenuClick);
+hamburgerMenuView.addNavLinksClickHandler();
+
+//// Color settings
+
 colorSettingsView.addResetButtonHandle(controlResetColorSettings);
 colorSettingsView.addSaveButtonHandle(controlSaveColorSettings);
 colorSettingsView.addSettingsHandler();
+model.getUserColorSettings();
+model.applyUserColorSettings();
+colorSettingsView.setPickersColor(model.state.colors);
+
+//// Test
+
 reactionTestView.addClickHandle(controlTestClick);
+
+//// Fetching user highscores from localstorage
+model.getUserHighscores();
+tableView.displayUserScores(model.state.highscores);
+
+//// Highscores table
+tableView.addRemovingScoreHandler(controlScoreRemove);

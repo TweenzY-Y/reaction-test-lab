@@ -2,7 +2,7 @@ const hamburgerMenuElement = document.querySelector(".hamburger-menu");
 const navElement = document.querySelector("ul");
 const mainElement = document.querySelector("main");
 const bodyElement = document.querySelector("body");
-const navLinkElements = document.querySelectorAll("a");
+const navLinks = document.querySelector("ul");
 const collectionOfToggleElements = [
   hamburgerMenuElement,
   navElement,
@@ -11,20 +11,23 @@ const collectionOfToggleElements = [
 ];
 
 class HamburgerMenuView {
-  toggleHamburgerMenuEffect(mobileView) {
-    if (!hamburgerMenuElement.classList.contains("active") && mobileView) {
-      collectionOfToggleElements.forEach((element) => {
-        element.classList.add("active");
-      });
-    } else {
-      collectionOfToggleElements.forEach((element) => {
-        element.classList.remove("active");
-      });
-    }
+  removeHamburgerEffects() {
+    collectionOfToggleElements.forEach((element) => {
+      element.classList.remove("active");
+    });
+  }
+  handleHamburgerMenuClick() {
+    collectionOfToggleElements.forEach((element) => {
+      element.classList.toggle("active");
+    });
   }
 
   addHamburgerMenuClickHandler(a) {
     hamburgerMenuElement.addEventListener("click", a);
+  }
+
+  addNavLinksClickHandler() {
+    navLinks.addEventListener("click", this.removeHamburgerEffects);
   }
 }
 
