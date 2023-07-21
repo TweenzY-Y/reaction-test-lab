@@ -40,6 +40,11 @@ class ColorSettingsView {
   changeState() {
     settingsPopupBackgroundElement.classList.toggle("active");
     settingsPopupMainElement.classList.toggle("active");
+    if (settingsPopupBackgroundElement.classList.contains("active")) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
   }
 
   addSettingsHandler() {

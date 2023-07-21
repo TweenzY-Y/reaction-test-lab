@@ -278,7 +278,8 @@ tr {
   transform: translate(-50%, -50%);
   background-color: var(--SECOND-PURPLE);
   border-radius: 20px;
-  height: 70%;
+  height: max(70%, 450px);
+  min-height: fit-content;
   width: 80%;
   z-index: 2;
   text-align: center;
