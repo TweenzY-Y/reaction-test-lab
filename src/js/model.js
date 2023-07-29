@@ -29,9 +29,8 @@ const state = {
 // SCORES
 
 const getUserHighscores = function () {
-  state.highscores = JSON.parse(
-    localStorage.getItem("user-reactiontime-highscores")
-  );
+  state.highscores =
+    JSON.parse(localStorage.getItem("user-reactiontime-highscores")) || [];
 };
 
 const removeScore = function (index) {
