@@ -18,6 +18,10 @@
   padding: 0;
 }
 
+html {
+  width: 100%;
+}
+
 body {
   background: var(--BG);
   color: var(--TEXT-COLOR);
@@ -191,7 +195,7 @@ ul.active {
 /* TABLE STYLING */
 
 table {
-  font-size: 1.5rem;
+  font-size: 1rem;
   height: 95%;
   margin: 50px auto;
   width: 90%;
@@ -272,6 +276,7 @@ tr {
 }
 
 .settings-popup {
+  font-size: 1.5rem;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -296,11 +301,19 @@ tr {
   gap: 15px;
 }
 
+.settings-popup div {
+  display: flex;
+  justify-content: space-around;
+  width: 50%;
+  gap: 20px;
+}
+
 .settings-popup button {
   border: 0;
-  width: 50%;
-  height: 50px;
-  font-size: 1.5rem;
+  width: clamp(200px, 25%, 100px);
+  min-width: 100px;
+  height: 35px;
+  font-size: 1rem;
   border-radius: 20px;
   font-weight: 600;
   box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 30px;
@@ -425,8 +438,15 @@ input[type="color"] {
     width: 100%;
   }
 
-  /* SETTINGS POPUP */
+  /* TABLE */
+
+  table {
+    font-size: 1.5rem;
+  }
+  /* SETTINGS*/
+
   .settings-popup button {
-    width: 350px;
+    font-size: 1.5rem;
+    height: 50px;
   }
 }
